@@ -10,48 +10,56 @@ public class BeeACSBehavior : MonoBehaviour
     }
 
 
-    public Vector2 hivePosition;
+    public Vector3 hivePosition;
 
     public PheromoneMap pheromoneMap;
     public float maxSpeed;
-    public float turnSpeed;
-    public GameObject sensorPrefab;
+    public float maxAcceleration;
+    public float sensorsRange;
 
     private State _state;
 
-    private Vector2 _position;
-    private Vector2 _velocity;
-    private Vector2 _velocityTarget;
+    private Vector3 _position;
+    private Vector3 _velocity;
+    private Vector3 _velocityTarget;
 
-    private PheromoneSensor _sensorLeft;
-    private PheromoneSensor _sensorForward;
-    private PheromoneSensor _sensorRight;
-    private Vector2 _pheromoneVelocityTarget;
+    private Transform[] _sensors;
+    private float[] _sensorValues;
+    private Vector3 _pheromoneTarget;
     private Pheromone[] _pheromonesBuffer;
     
     private PheromoneType _sensedPheromone;
     private PheromoneType _laidPheromone;
 
-    private Vector2 _forward;
+    private Vector3 _forward;
     
 
     void Start()
     {
-        Vector2 leftSensorDir = (_forward + (Vector2) transform.up).normalized;
-        Vector2 rightSensorDir = (_forward - (Vector2) transform.up).normalized;
+        _position = transform.position;
+        _forward = Vector3.forward;
+        _velocity = Vector3.forward * maxSpeed;
+        _velocityTarget = _velocity;
 
-        _sensorLeft = Instantiate(sensorPrefab, _position + leftSensorDir, Quaternion.identity, transform).GetComponent<PheromoneSensor>();
-        _sensorForward = Instantiate(sensorPrefab, _position + _forward, Quaternion.identity, transform).GetComponent<PheromoneSensor>();
-        _sensorRight = Instantiate(sensorPrefab, _position + rightSensorDir, Quaternion.identity, transform).GetComponent<PheromoneSensor>();
+        Vector3 leftSensorDir = (_forward + Vector3.left*sensorsRange).normalized;
+        Vector3 rightSensorDir = (_forward + Vector3.right*sensorsRange).normalized;
+
+        _sensors = new Transform[3];
+        GameObject blank = new GameObject();
+        _sensors[0] = Instantiate(blank, _position + leftSensorDir, Quaternion.identity, transform).GetComponent<Transform>();
+        _sensors[1] = Instantiate(blank, _position + _forward, Quaternion.identity, transform).GetComponent<Transform>();
+        _sensors[2] = Instantiate(blank, _position + rightSensorDir, Quaternion.identity, transform).GetComponent<Transform>();
+        _sensorValues = new float[3];
         _pheromonesBuffer = new Pheromone[9];
 
+        _state = State.SEARCHING;
         _sensedPheromone = PheromoneType.TO_FLOWERS;
-        _sensedPheromone = PheromoneType.FROM_FLOWERS;
+        _laidPheromone = PheromoneType.FROM_FLOWERS;
 
         StartCoroutine(StartSensingPheromones());
     }
 
-    void Init(Vector2 hivePosition)
+    void Init(Vector3 hivePosition)
     {
         this.hivePosition = hivePosition;
     }
@@ -60,8 +68,8 @@ public class BeeACSBehavior : MonoBehaviour
     {
         switch (_state) {
         case State.SEARCHING:
-            TurnToFlowers();
-            TurnToPheromones();
+            // TurnToFlowers();
+            // TurnToPheromones();
             SteerSlightly();
             break;
         case State.RETURNING:
@@ -74,20 +82,19 @@ public class BeeACSBehavior : MonoBehaviour
         }
         
         Move();
+        Debug.Log(_velocity.sqrMagnitude + " " + _velocityTarget.sqrMagnitude);
     }
 
     void Move()
     {
-        // Turn towards directionTarget at a fixed rate turnSpeed
-        Vector2 turnForceTarget = (_velocityTarget - _velocity) * turnSpeed;
-        Vector2 acceleration = Vector2.ClampMagnitude(turnForceTarget, turnSpeed);
+        Vector3 turnAccel = Vector3.ClampMagnitude((_velocityTarget - _velocity) * maxAcceleration, maxAcceleration);
 
-        _velocity = Vector2.ClampMagnitude(_velocity + acceleration * Time.fixedDeltaTime, maxSpeed);
+        _velocity = Vector3.ClampMagnitude(_velocity + turnAccel * Time.fixedDeltaTime, maxSpeed);
         _position += _velocity * Time.fixedDeltaTime;
         
         _forward = _velocity.normalized;
 
-        transform.SetPositionAndRotation(_position, Quaternion.FromToRotation(Vector3.right, _forward));
+        transform.SetPositionAndRotation(_position, Quaternion.FromToRotation(Vector3.forward, _forward));
     }
 
     IEnumerator StartSensingPheromones()
@@ -100,31 +107,32 @@ public class BeeACSBehavior : MonoBehaviour
 
     void SensePheromones()
     {
-        CheckSensor(_sensorLeft);
-        CheckSensor(_sensorForward);
-        CheckSensor(_sensorRight);
+        for (int i = 0; i < _sensors.Length; i++) CheckSensor(i);
         
-        Vector2 leftSensorDir = (_forward + (Vector2) transform.up).normalized;
-        Vector2 rightSensorDir = (_forward - (Vector2) transform.up).normalized;
+        Vector3 leftSensorDir = (_forward - transform.right).normalized;
+        Vector3 rightSensorDir = (_forward + transform.right).normalized;
 
-        if (_sensorLeft.value >= _sensorForward.value && _sensorLeft.value >= _sensorRight.value) {
-            _pheromoneVelocityTarget = leftSensorDir;
-        } else if (_sensorForward.value >= _sensorLeft.value && _sensorForward.value >= _sensorRight.value) {
-            _pheromoneVelocityTarget = _forward;
+        if (_sensorValues[0] >= _sensorValues[1] && _sensorValues[0] >= _sensorValues[2]) {
+            _pheromoneTarget = leftSensorDir;
+        } else if (_sensorValues[2] >= _sensorValues[0] && _sensorValues[2] >= _sensorValues[1]) {
+            _pheromoneTarget = rightSensorDir;
         } else {
-            _pheromoneVelocityTarget = rightSensorDir;
+            _pheromoneTarget = _forward;
         }
     }
 
-    void CheckSensor(PheromoneSensor sensor)
+    void CheckSensor(int sensorIdx)
     {
-        sensor.value = 0;
-        pheromoneMap.CollectAroundCenter(_pheromonesBuffer, sensor.transform.position, _sensedPheromone);
+        _sensorValues[sensorIdx] = 0;
+        Transform sensor = _sensors[sensorIdx];
+
+        pheromoneMap.CollectAroundCenter(_pheromonesBuffer, sensor.position, _sensedPheromone);
 
         foreach (Pheromone p in _pheromonesBuffer) {
+            if (p == null) break;
             float lifetime = Time.time - p.creationTime;
             float evaporation = Mathf.Max(1, lifetime/pheromoneMap.evaporationTime);
-            sensor.value += p.value * (1-evaporation);
+            _sensorValues[sensorIdx] += p.value * (1-evaporation);
         }
     }
 
@@ -137,7 +145,7 @@ public class BeeACSBehavior : MonoBehaviour
     void TurnToPheromones()
     {
         if (_state == State.TURNING) return;
-        _velocityTarget = _pheromoneVelocityTarget;
+        _velocityTarget = _pheromoneTarget*maxSpeed;
     }
 
     void TurnBack()
@@ -145,7 +153,7 @@ public class BeeACSBehavior : MonoBehaviour
         StartCoroutine(StartTurningTowards(-_forward));
     }
 
-    IEnumerator StartTurningTowards(Vector2 dir) {
+    IEnumerator StartTurningTowards(Vector3 dir) {
         _state = State.TURNING;
         _velocityTarget = dir.normalized * maxSpeed;
 
@@ -156,21 +164,21 @@ public class BeeACSBehavior : MonoBehaviour
     void SteerSlightly()
     {
         // Get a random direction slightly different from _velocityTarget
-		Vector2 smallestRandomDir = Vector2.zero;
+		Vector3 smallestRandomDir = Vector3.zero;
 		float change = -1;
-		const int iterations = 4;
+		const int iterations = 3;
 		for (int i = 0; i < iterations; i++)
 		{
 			Vector2 randomDir = Random.insideUnitCircle.normalized;
-			float dot = Vector2.Dot(_velocityTarget, randomDir);
+			float dot = Vector3.Dot(_velocityTarget, randomDir);
 			if (dot > change)
 			{
 				change = dot;
-				smallestRandomDir = randomDir;
+				smallestRandomDir = new Vector3(randomDir.x, 0, randomDir.y);
 			}
 		}
 
-        _velocityTarget = smallestRandomDir;
+        _velocityTarget = Vector3.ClampMagnitude(_velocityTarget + smallestRandomDir*maxSpeed, maxSpeed);
     }
 
 }
