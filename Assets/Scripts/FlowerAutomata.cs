@@ -83,13 +83,38 @@ public class FlowerAutomata
         InitializeAutomata();
     }
 
+    public FlowerAutomata(int[,] chunks, Vector2Int chunksSize, int chunkToAutomataLength, int deadSteps, int autPollenStart, int autNonPollenStart, float aliveReductionChance, float deadReductionChance, float pollinationChance, float seedingChance)
+    {
+        this.chunks = chunks;
+        this.chunksSize = chunksSize;
+        this.chunkToAutomataLength = chunkToAutomataLength;
+        this.deadSteps = deadSteps;
+        this.autPollenStart = autPollenStart;
+        this.autNonPollenStart = autNonPollenStart;
+        this.aliveReductionChance = aliveReductionChance;
+        this.deadReductionChance = deadReductionChance;
+        this.pollinationChance = pollinationChance;
+        this.seedingChance = seedingChance;
+
+        autDeadStart = -1;
+        autDeadLimit = -deadSteps;
+        autEmpty = 0;
+        autBlocked = -8;
+
+        if (autPollenStart <= autNonPollenStart) {
+            Debug.LogError("");
+            return;
+        }
+
+        automataSize = chunksSize * chunkToAutomataLength;
+        InitializeAutomata();
+    }
+
     private void ReadChunks(string filePath)
     {
         chunks = new int[chunksSize.x, chunksSize.y];
         // Read the grid from the file
         string[] lines = File.ReadAllLines(filePath);
-        chunksSize.y = lines.Length;
-        chunksSize.x = lines[0].Split(' ').Length;
 
         for (int i = 0; i < lines.Length; i++) {
             string[] values = lines[i].Split(' ');
