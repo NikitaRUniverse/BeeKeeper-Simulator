@@ -276,7 +276,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 574741810}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b76ac5c55375964e942532c771d13a8, type: 3}
+  m_Script: {fileID: 11500000, guid: 594ef30ff15cd354695c767459de1fc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ax: 2.5
@@ -287,12 +287,13 @@ MonoBehaviour:
   bz: -1
   hivePrefab: {fileID: 8366170884155809065, guid: 6f767238d71c96d4aba103d5e388232f, type: 3}
   randomSeed: 0
-  maxHives: 2
-  minDistanceBetweenHives: 20
+  maxHives: 3
+  minDistanceBetweenHives: 12
   inputFilePath: Assets/MapMatrix.txt
   outputFilePath: Assets/output.txt
   hivePositionOffset: 3
   yCoord: -0.45
+  useRandomDistribution: 1
 --- !u!4 &574741812
 Transform:
   m_ObjectHideFlags: 0

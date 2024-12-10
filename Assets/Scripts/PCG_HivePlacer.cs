@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public class HiveGenerator : MonoBehaviour
@@ -21,6 +22,7 @@ public class HiveGenerator : MonoBehaviour
     public string outputFilePath = "Assets/output.txt"; // Output file path
     public int hivePositionOffset = 0;
     public float yCoord;
+    public bool useRandomDistribution;
 
     private int width;
     private int height;
@@ -33,9 +35,15 @@ public class HiveGenerator : MonoBehaviour
         // Read grid from input file
         int[,] grid = ReadGridFromFile(inputFilePath);
 
-        // Generate hive positions using Poisson Disk Sampling
-        List<Vector2> hivePositions = GenerateHivePositions(grid);
+        // Get working grid with expaded obstacles to avoid generation of hive on the edge
+        int[,] wotkingGrid = expandOnesOnGivenGrid(grid);
 
+        // Generate hive positions using Poisson Disk Sampling
+        List<Vector2> hivePositions = GenerateHivePositions(wotkingGrid);
+
+        // Add generated hive positions to original grid
+        grid = addPositionsToGrid(grid, hivePositions);
+            
         // Instantiate Hive prefab at generated positions
         InstantiateHives(hivePositions);
 
@@ -58,6 +66,49 @@ public class HiveGenerator : MonoBehaviour
             {
                 grid[i, j] = int.Parse(values[j]);
             }
+        }
+
+        return grid;
+    }
+
+    private int[,] expandOnesOnGivenGrid(int[,] grid)
+    {
+        // Create a new grid to store the modified values
+        int[,] newGrid = new int[grid.GetLength(0), grid.GetLength(1)];
+
+        // Copy the original grid to the new grid
+        for (int i = 0; i < grid.GetLength(0); i++)
+        {
+            for (int j = 0; j < grid.GetLength(1); j++)
+            {
+                newGrid[i, j] = grid[i, j];
+            }
+        }
+
+        // Iterate through the grid to find all '1' and mark neighbors in the new grid
+        for (int i = 0; i < grid.GetLength(0); i++)
+        {
+            for (int j = 0; j < grid.GetLength(1); j++)
+            {
+                if (grid[i, j] == 1)
+                {
+                    // Update neighbors in the new grid
+                    if (i > 0 && grid[i - 1, j] == 0) newGrid[i - 1, j] = 1; // Top
+                    if (i < grid.GetLength(0) - 1 && grid[i + 1, j] == 0) newGrid[i + 1, j] = 1; // Bottom
+                    if (j > 0 && grid[i, j - 1] == 0) newGrid[i, j - 1] = 1; // Left
+                    if (j < grid.GetLength(1) - 1 && grid[i, j + 1] == 0) newGrid[i, j + 1] = 1; // Right
+                }
+            }
+        }
+
+        return newGrid;
+    }
+
+    private int[,] addPositionsToGrid(int[,] grid, List<Vector2> hivePositions)
+    {
+        foreach (var position in hivePositions)
+        {
+            grid[(int)position.y, (int)position.x] = 1;
         }
 
         return grid;
@@ -116,7 +167,7 @@ public class HiveGenerator : MonoBehaviour
         List<Vector2> hivePositions = new List<Vector2>();
 
         // Fool check
-        if (hivePositionOffset >= grid.GetLength(0) || hivePositionOffset >=  grid.GetLength(1))
+        if (hivePositionOffset >= grid.GetLength(0) || hivePositionOffset >= grid.GetLength(1))
         {
             throw new Exception("Hive position offset can't be bigger or equal than any of grid dimensions!");
         }
@@ -128,15 +179,60 @@ public class HiveGenerator : MonoBehaviour
             int center_y = width / 2;
             hivePositions.Add(new Vector2(center_x, center_y));
             grid[center_x, center_y] = 1;
-        } else
+        }
+        else
         {
-            // Iterate over the grid to find potential hive positions
-            for (int x = hivePositionOffset; x < grid.GetLength(0) - hivePositionOffset; x++)
+            if (!useRandomDistribution)
             {
-                for (int y = hivePositionOffset; y < grid.GetLength(1) - hivePositionOffset; y++)
+                // Iterate over the grid to find potential hive positions
+                for (int x = hivePositionOffset; x < grid.GetLength(0) - hivePositionOffset; x++)
                 {
-                    // Check if the current cell is a potential hive position (i.e., it has a value of 0)
-                    if (grid[x, y] == 0)
+                    for (int y = hivePositionOffset; y < grid.GetLength(1) - hivePositionOffset; y++)
+                    {
+                        // Check if the current cell is a potential hive position (i.e., it has a value of 0)
+                        if (grid[x, y] == 0)
+                        {
+                            // Check if the maximum number of hives has been reached
+                            if (hivePositions.Count >= maxHives)
+                            {
+                                return hivePositions;
+                            }
+
+                            // Check if the current cell is far enough from existing hive positions
+                            if (IsFarEnoughFromExistingHives(hivePositions, new Vector2(y, x)))
+                            {
+                                // Add the current cell to the list of hive positions
+                                hivePositions.Add(new Vector2(y, x));
+
+                                // Mark the current cell as occupied (i.e., set its value to 1)
+                                grid[x, y] = 1;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                List<Vector2Int> availablePositions = new List<Vector2Int>();
+                List<Vector2Int> takenPositions = new List<Vector2Int>();
+
+                for (int x = hivePositionOffset; x < grid.GetLength(0) - hivePositionOffset; x++)
+                {
+                    for (int y = hivePositionOffset; y < grid.GetLength(1) - hivePositionOffset; y++)
+                    {
+                        if (grid[x, y] == 0)
+                        {
+                            availablePositions.Add(new Vector2Int(y, x));
+                        }
+                    }
+                }
+
+                System.Random rnd = new System.Random(randomSeed);
+                var shuffledAvailablePositions = availablePositions.OrderBy(item => rnd.Next());
+
+                foreach (Vector2Int position in shuffledAvailablePositions)
+                {
+                    if (!takenPositions.Contains(position))
                     {
                         // Check if the maximum number of hives has been reached
                         if (hivePositions.Count >= maxHives)
@@ -145,13 +241,16 @@ public class HiveGenerator : MonoBehaviour
                         }
 
                         // Check if the current cell is far enough from existing hive positions
-                        if (IsFarEnoughFromExistingHives(hivePositions, new Vector2(y, x)))
+                        if (IsFarEnoughFromExistingHives(hivePositions, position))
                         {
                             // Add the current cell to the list of hive positions
-                            hivePositions.Add(new Vector2(y, x));
+                            hivePositions.Add(position);
 
                             // Mark the current cell as occupied (i.e., set its value to 1)
-                            grid[x, y] = 1;
+                            grid[position.y, position.x] = 1;
+
+                            // Add the current cell to the list of taken positions
+                            takenPositions.Add(position);
                         }
                     }
                 }
@@ -195,12 +294,13 @@ public class HiveGenerator : MonoBehaviour
         // Iterate over the hive positions
         foreach (Vector2 hivePosition in hivePositions)
         {
+
             // Calculate the instantiation coordinates
             float instantiationX = (hivePosition.x * ax) + bx + height * hz;
             float instantiationZ = (hivePosition.y * az) + bz + width * wx;
-            
+
             // Instantiate the Hive prefab at the calculated coordinates
-            GameObject hive = Instantiate(hivePrefab, new Vector3(instantiationX, yCoord, instantiationZ), Quaternion.identity);
+            GameObject hive = Instantiate(hivePrefab, new Vector3(instantiationX, yCoord, instantiationZ), Quaternion.identity, transform.parent);
         }
     }
 }
