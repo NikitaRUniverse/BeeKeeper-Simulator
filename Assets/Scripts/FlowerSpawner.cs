@@ -12,13 +12,6 @@ public class FlowerSpawner : MonoBehaviour
     public UIFlowerCounter flowerCounterUI;
     public int newFlowers = 20;  // Number of flowers to generate during the rain
 
-    // Selection of colors for random choosing
-    public Color color1 = new Color(1f, 0.95f, 0.8f);
-    public Color color2 = new Color(0.7f, 0.7f, 0.75f);
-    public Color color3 = new Color(0.5f, 0.5f, 0.55f);
-    public Color color4 = new Color(0.7f, 0.3f, 0.3f);
-    public Color color5 = new Color(0.2f, 0.6f, 0.4f);
-
     private int initialFlowers;
     private WeatherSystem weatherSystem;
     private bool spawned;
@@ -58,36 +51,8 @@ public class FlowerSpawner : MonoBehaviour
         {
             Vector3 spawnPosition = GenerateSpawnPosition(); 
             GameObject newFlower = Instantiate(flowerPrefab, spawnPosition, Quaternion.identity);
-            Color randomColor = GetRandomColor();
-            Renderer flowerRenderer = newFlower.GetComponent<Renderer>();
-            if (flowerRenderer != null)
-            {
-                flowerRenderer.material.color = randomColor;
-            }
 
             newFlower.GetComponent<Flower>().OnFlowerDestroyed += OnFlowerDestroyed;
-        }
-    }
-
-    // Randomly choose a color for a flower
-
-    private Color GetRandomColor()
-    {
-        int randomIndex = Random.Range(0, 5); 
-        switch (randomIndex)
-        {
-            case 0:
-                return color1;
-            case 1:
-                return color2;
-            case 2:
-                return color3;
-            case 3:
-                return color4;
-            case 4:
-                return color5;
-            default:
-                return color1;
         }
     }
 
@@ -130,12 +95,6 @@ public class FlowerSpawner : MonoBehaviour
                 Vector3 spawnPosition = GenerateSpawnPosition();
                 GameObject newFlower = Instantiate(flowerPrefab, spawnPosition, Quaternion.identity);
 
-                Color randomColor = GetRandomColor();
-                Renderer flowerRenderer = newFlower.GetComponent<Renderer>();
-                if (flowerRenderer != null)
-                {
-                    flowerRenderer.material.color = randomColor;
-                }
 
                 numberOfFlowers++;
                 newFlower.GetComponent<Flower>().OnFlowerDestroyed += OnFlowerDestroyed;

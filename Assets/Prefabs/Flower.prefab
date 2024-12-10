@@ -102,7 +102,12 @@ MonoBehaviour:
   timerDecreaseSpeed: 0.5
   reverseTimerSpeed: 2
   speedIncreaseRate: 0.05
-  saveTimerDecreaseSpeed: 0
+  color1: {r: 1, g: 0, b: 0.0790658, a: 1}
+  color2: {r: 0, g: 0, b: 1, a: 1}
+  color3: {r: 0.9296404, g: 1, b: 0, a: 1}
+  color4: {r: 1, g: 0, b: 0.84188986, a: 1}
+  color5: {r: 1, g: 0.7238838, b: 0, a: 1}
+  initialColor: {r: 0.6548095, g: 0, b: 1, a: 1}
 --- !u!135 &2035552150323993820
 SphereCollider:
   m_ObjectHideFlags: 0
