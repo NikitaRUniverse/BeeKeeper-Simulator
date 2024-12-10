@@ -107,6 +107,9 @@ public class FlowerAutomata
         }
 
         automataSize = chunksSize * chunkToAutomataLength;
+        int t = automataSize.x;
+        automataSize.x = automataSize.y;
+        automataSize.y = t;
         InitializeAutomata();
     }
 
@@ -125,14 +128,14 @@ public class FlowerAutomata
     }
 
     private void InitializeAutomata() {
-        automata = new int[automataSize.y, automataSize.x];
+        automata = new int[automataSize.x, automataSize.y];
         
         for (int chx = 0; chx < chunksSize.x; chx++) for (int chy = 0; chy < chunksSize.y; chy++) {
             bool blocked = chunks[chx, chy] == 1;
             for (int dx = 0; dx < chunkToAutomataLength; dx++) for (int dy = 0; dy < chunkToAutomataLength; dy++) {
-                int x = chx*chunkToAutomataLength + dx, y = chy*chunkToAutomataLength + dy;
+                int y = chx*chunkToAutomataLength + dx, x = chy*chunkToAutomataLength + dy;
                 if (blocked) {
-                    automata[y,automataSize.x-1-x] = autBlocked;
+                    automata[x,automataSize.y-1-y] = autBlocked;
                     continue;
                 }
             }
@@ -223,5 +226,9 @@ public class FlowerAutomata
 
     public bool IsAlive(int x, int y) {
         return automata[x,y] > autEmpty;
+    }
+
+    public bool IsDead(int x, int y) {
+        return automata[x,y] <= autDeadStart && automata[x,y] >= autDeadLimit;
     }
 }

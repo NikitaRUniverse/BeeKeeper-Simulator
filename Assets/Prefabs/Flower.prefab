@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 6008439363279107660}
   - component: {fileID: 6006897494430503506}
   - component: {fileID: 4362811850300266568}
-  - component: {fileID: 729945532890230476}
   - component: {fileID: 2035552150323993820}
+  - component: {fileID: -1427937111922257427}
   m_Layer: 0
   m_Name: Flower
   m_TagString: Untagged
@@ -85,29 +85,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &729945532890230476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7210033087037091213}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29e2eacf0e1165f4d97af45f9e7ca8c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  initialLifetime: 15
-  lifetime: 0
-  timerDecreaseSpeed: 0.5
-  reverseTimerSpeed: 2
-  speedIncreaseRate: 0.05
-  color1: {r: 1, g: 0, b: 0.0790658, a: 1}
-  color2: {r: 0, g: 0, b: 1, a: 1}
-  color3: {r: 0.9296404, g: 1, b: 0, a: 1}
-  color4: {r: 1, g: 0, b: 0.84188986, a: 1}
-  color5: {r: 1, g: 0.7238838, b: 0, a: 1}
-  initialColor: {r: 0.6548095, g: 0, b: 1, a: 1}
 --- !u!135 &2035552150323993820
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -129,3 +106,16 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 2.52
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-1427937111922257427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7210033087037091213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e037b6d7d8806c4f9669b97a5bd0f37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 0}
