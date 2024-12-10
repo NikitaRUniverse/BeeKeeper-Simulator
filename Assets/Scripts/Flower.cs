@@ -72,7 +72,7 @@ public class Flower : MonoBehaviour
         if (isBeeNearby)
         {
             // If a bee is above the flower, health will be restored
-            lifetime += reverseTimerSpeed * Time.deltaTime;
+            lifetime = initialLifetime;
         }
         else
         {
@@ -103,7 +103,7 @@ public class Flower : MonoBehaviour
         // Health is full during the rain
         if (weatherSystem.currentWeather == WeatherSystem.WeatherType.Rainy)
         {
-            lifetime = initialLifetime;
+            lifetime += 2 * Time.deltaTime;
             timerDecreaseSpeed = saveTimerDecreaseSpeed;
         }
     }

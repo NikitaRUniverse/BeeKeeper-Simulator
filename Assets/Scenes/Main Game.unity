@@ -283,8 +283,8 @@ MonoBehaviour:
   az: -2.5
   wx: 1.25
   hz: -1.25
-  bx: 0
-  bz: -1
+  bx: 0.625
+  bz: -1.85
   hivePrefab: {fileID: 8366170884155809065, guid: 6f767238d71c96d4aba103d5e388232f, type: 3}
   randomSeed: 0
   maxHives: 3
@@ -633,9 +633,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 963194225}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39a51babe7adc1943ac09f04af8eeb4b, type: 3}
+  m_Script: {fileID: 11500000, guid: e1f4511c22723514e9a2142145644bf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sunny: {fileID: 767487379}
+  cloudy: {fileID: 235682656}
+  rainy: {fileID: 2123542477}
 --- !u!1 &1023967568
 GameObject:
   m_ObjectHideFlags: 0
@@ -1028,7 +1031,7 @@ Transform:
   m_GameObject: {fileID: 1420581953}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.2621441, y: 16.17831, z: 0.30624726}
+  m_LocalPosition: {x: -40, y: 0, z: -22.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1041,7 +1044,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1420581953}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ec74fbbc9a6968c42a3d41be682b9902, type: 3}
   m_Name: 
@@ -1053,11 +1056,6 @@ MonoBehaviour:
   constantY: -0.2
   flowerCounterUI: {fileID: 1982079994}
   newFlowers: 20
-  color1: {r: 1, g: 0, b: 0.11425209, a: 1}
-  color2: {r: 1, g: 0.72604626, b: 0, a: 1}
-  color3: {r: 0, g: 1, b: 0.914711, a: 1}
-  color4: {r: 0.998732, g: 1, b: 0, a: 1}
-  color5: {r: 0.80872536, g: 0, b: 1, a: 1}
 --- !u!114 &1420581957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1071,12 +1069,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flowerPrefab: {fileID: 7210033087037091213, guid: 9356c802e4152c24c864d034bb719bbf, type: 3}
-  flowerStartSeeds: 20
+  flowerStartSeeds: 2000
   flowerStartSpreadIters: 3
   flowerStartSpreadChance: 0.7
-  flowerCellScale: 1
-  chunksSize: {x: 32, y: 18}
-  chunkToAutomataLength: 1
+  flowerCellScale: 1.25
+  chunksSize: {x: 18, y: 32}
+  chunkToAutomataLength: 2
   deadSteps: 5
   autPollenStart: 9
   autNonPollenStart: 5
