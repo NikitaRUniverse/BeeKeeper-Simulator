@@ -125,14 +125,14 @@ public class FlowerAutomata
     }
 
     private void InitializeAutomata() {
-        automata = new int[automataSize.x, automataSize.y];
+        automata = new int[automataSize.y, automataSize.x];
         
         for (int chx = 0; chx < chunksSize.x; chx++) for (int chy = 0; chy < chunksSize.y; chy++) {
             bool blocked = chunks[chx, chy] == 1;
             for (int dx = 0; dx < chunkToAutomataLength; dx++) for (int dy = 0; dy < chunkToAutomataLength; dy++) {
                 int x = chx*chunkToAutomataLength + dx, y = chy*chunkToAutomataLength + dy;
                 if (blocked) {
-                    automata[x,y] = autBlocked;
+                    automata[y,automataSize.x-1-x] = autBlocked;
                     continue;
                 }
             }
