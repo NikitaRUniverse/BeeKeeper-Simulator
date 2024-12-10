@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1142016852251124530}
   - component: {fileID: 7325920352664913910}
   - component: {fileID: 6119051511885884658}
+  - component: {fileID: 1079888412263447178}
   m_Layer: 0
   m_Name: Hive
   m_TagString: Untagged
@@ -83,3 +84,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1079888412263447178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8366170884155809065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65e2f3078ae26f3458964a7b85292877, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bees: 10
+  beePrefab: {fileID: 297320978708403445, guid: ee471f0b736c56c46b99f720c4dd3391, type: 3}

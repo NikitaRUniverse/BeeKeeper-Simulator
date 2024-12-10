@@ -102,7 +102,7 @@ MonoBehaviour:
   moveSpeed: 9
   noiseScale: 0.25
   attractionStrength: 4.1
-  attractionThreshold: 98
+  attractionThreshold: 400
   targetPosition: {x: 0, y: 0, z: 0}
   hasTarget: 0
   center: {x: 0, y: 0, z: 0}

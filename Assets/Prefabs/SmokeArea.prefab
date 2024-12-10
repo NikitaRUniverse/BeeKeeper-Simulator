@@ -4979,5 +4979,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff2574e323ceede4785ca92db2f40501, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifetime: 0.54
-  effectRadius: 6.51
+  lifetime: 0.92
+  effectRadius: 9.73

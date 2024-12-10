@@ -51,30 +51,19 @@ public class Bee : MonoBehaviour
         if (weatherSystem.currentWeather == WeatherSystem.WeatherType.Rainy)
         {
             hasTarget = true;
-            moveSpeed = savedMoveSpeed * 2f;
-            noiseScale = savedNoiseScale * 2f;
+            moveSpeed = savedMoveSpeed * 3f;
+            noiseScale = savedNoiseScale * 3f;
         }
 
-        // Increasing the speed of the bees during the sunny weather
-
-        else if (weatherSystem.currentWeather == WeatherSystem.WeatherType.Sunny)
-        {
-            gameObject.transform.GetChild(0).gameObject.SetActive(true);
-            hasTarget = false;
-            moveSpeed = savedMoveSpeed * 2f;
-            noiseScale = savedNoiseScale * 2f;
-        }
-
-        // Makes the standard speed of the bees during the cloudy weather
+        // Normal Behaviour
 
         else
         {
             gameObject.transform.GetChild(0).gameObject.SetActive(true);
             hasTarget = false;
-            moveSpeed = savedMoveSpeed;
-            noiseScale = savedNoiseScale;
+            moveSpeed = savedMoveSpeed + savedMoveSpeed * (FindAnyObjectByType<WeatherSystem>().currentValue / 2);
+            noiseScale = savedNoiseScale + savedNoiseScale * (FindAnyObjectByType<WeatherSystem>().currentValue / 2);
         }
-
 
 
         // Moving to hive
