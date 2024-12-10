@@ -49,6 +49,8 @@ public class HiveGenerator : MonoBehaviour
 
         // Write grid with occupied cells to output file
         WriteGridToFile(grid, outputFilePath);
+
+        FindAnyObjectByType<FlowerAutomataController>().Init();
     }
 
     private int[,] ReadGridFromFile(string filePath)

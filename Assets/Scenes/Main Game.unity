@@ -998,6 +998,7 @@ GameObject:
   - component: {fileID: 1420581955}
   - component: {fileID: 1420581954}
   - component: {fileID: 1420581956}
+  - component: {fileID: 1420581957}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -1057,6 +1058,34 @@ MonoBehaviour:
   color3: {r: 0, g: 1, b: 0.914711, a: 1}
   color4: {r: 0.998732, g: 1, b: 0, a: 1}
   color5: {r: 0.80872536, g: 0, b: 1, a: 1}
+--- !u!114 &1420581957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1420581953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d28b05f135fb2649972c4900f3d620d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flowerPrefab: {fileID: 7210033087037091213, guid: 9356c802e4152c24c864d034bb719bbf, type: 3}
+  flowerStartSeeds: 20
+  flowerStartSpreadIters: 3
+  flowerStartSpreadChance: 0.7
+  flowerCellScale: 1
+  chunksSize: {x: 32, y: 18}
+  chunkToAutomataLength: 1
+  deadSteps: 5
+  autPollenStart: 9
+  autNonPollenStart: 5
+  aliveReductionChance: 0.8
+  deadReductionChance: 0.8
+  pollinationChance: 0.1
+  seedingChance: 0.15
+  active: 1
+  stepPeriodSeconds: 0.3
 --- !u!1 &1982079990
 GameObject:
   m_ObjectHideFlags: 0

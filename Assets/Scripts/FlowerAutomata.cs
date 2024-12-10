@@ -79,7 +79,7 @@ public class FlowerAutomata
         }
 
         automataSize = chunksSize * chunkToAutomataLength;
-        ReadChunks("Assets/MapMatrix (8).txt");
+        ReadChunks("Assets/output.txt");
         InitializeAutomata();
     }
 

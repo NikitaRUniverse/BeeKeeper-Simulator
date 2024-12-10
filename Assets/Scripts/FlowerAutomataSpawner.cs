@@ -32,7 +32,7 @@ public class FlowerAutomataController : MonoBehaviour
     private Color color5 = new Color(0.2f, 0.6f, 0.4f);
 
 
-    void Start() {
+    public void Init() {
         automata = new FlowerAutomata(
             chunksSize,
             chunkToAutomataLength,
