@@ -33,28 +33,56 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
     }
 
     void GenerateNoiseMap()
+{
+    int gridSize = 16; 
+    int gridX = Mathf.CeilToInt(textureWidth / (float)gridSize);
+    int gridY = Mathf.CeilToInt(textureHeight / (float)gridSize);
+
+    float[,] gridValues = new float[gridX + 1, gridY + 1];
+    noiseMap = new float[textureWidth, textureHeight];
+
+    for (int x = 0; x <= gridX; x++)
     {
-        noiseMap = new float[textureWidth, textureHeight];
-        Vector2 center = new Vector2(textureWidth / 2f, textureHeight / 2f);
-
-        for (int y = 0; y < textureHeight; y++)
+        for (int y = 0; y <= gridY; y++)
         {
-            for (int x = 0; x < textureWidth; x++)
-            {
-                float xCoord = x * noiseScale;
-                float yCoord = y * noiseScale;
-
-                float noiseValue = Mathf.PerlinNoise(xCoord, yCoord);
-
-                // Lightening the center to create a field
-                float distanceToCenter = Vector2.Distance(new Vector2(x, y), center) / (textureWidth / 2f);
-                distanceToCenter = Mathf.Clamp01(distanceToCenter);
-                noiseValue += (1 - distanceToCenter) * 0.5f;
-
-                noiseMap[x, y] = Mathf.Clamp01(noiseValue);
-            }
+            gridValues[x, y] = UnityEngine.Random.value;
         }
     }
+
+    for (int y = 0; y < textureHeight; y++)
+    {
+        for (int x = 0; x < textureWidth; x++)
+        {
+            float gx = x / (float)gridSize;
+            float gy = y / (float)gridSize;
+
+            int x0 = Mathf.FloorToInt(gx);
+            int x1 = x0 + 1;
+            int y0 = Mathf.FloorToInt(gy);
+            int y1 = y0 + 1;
+
+            float dx = gx - x0;
+            float dy = gy - y0;
+
+            float v00 = gridValues[x0, y0];
+            float v10 = gridValues[x1, y0];
+            float v01 = gridValues[x0, y1];
+            float v11 = gridValues[x1, y1];
+
+            float v0 = Mathf.Lerp(v00, v10, dx);
+            float v1 = Mathf.Lerp(v01, v11, dx);
+            float noiseValue = Mathf.Lerp(v0, v1, dy);
+
+            Vector2 center = new Vector2(textureWidth / 2f, textureHeight / 2f);
+            float distanceToCenter = Vector2.Distance(new Vector2(x, y), center) / (textureWidth / 2f);
+            distanceToCenter = Mathf.Clamp01(distanceToCenter);
+            noiseValue += (1 - distanceToCenter) * 0.5f;
+
+            noiseMap[x, y] = Mathf.Clamp01(noiseValue);
+        }
+    }
+}
+
 
     void GenerateRandomPoints()
     {
@@ -185,14 +213,13 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
                 {
                     Color pixelColor = texture.GetPixel(x, y);
 
-                    // Если цвет близок к цвету второго биома, отмечаем наличие
                     if (IsColorSimilar(pixelColor, biomeColor2))
                     {
                         hasBiome2 = true;
                         break;
                     }
                 }
-                if (hasBiome2) break; // Прекращаем проверку, если биом найден
+                if (hasBiome2) break; 
             }
 
             mapMatrix[row, col] = hasBiome2 ? 0 : 1;
