@@ -32,8 +32,9 @@ public class FlowerAutomataController : MonoBehaviour
     private Color color5 = new Color(0.2f, 0.6f, 0.4f);
 
 
-    public void Init() {
+    public void Init(int[,] chunks) {
         automata = new FlowerAutomata(
+            chunks,
             chunksSize,
             chunkToAutomataLength,
             deadSteps,
@@ -44,13 +45,20 @@ public class FlowerAutomataController : MonoBehaviour
             pollinationChance,
             seedingChance
         );
-        for (int i = 0; i < flowerStartSeeds; i++) {
-            SpawnFlowerRandomly(); 
-        }
-        for (int i = 0; i < flowerStartSpreadIters; i++) {
-            SpreadFlowersRandomly();
-        }
+        FillFlowers();
+        // for (int i = 0; i < flowerStartSeeds; i++) {
+        //     SpawnFlowerRandomly(); 
+        // }
+        // for (int i = 0; i < flowerStartSpreadIters; i++) {
+        //     SpreadFlowersRandomly();
+        // }
         // StartCoroutine(AutomataLoop());
+    }
+
+    void FillFlowers() {
+        for (int x = 0; x < automata.automata.GetLength(0); x++) for (int y = 0; y < automata.automata.GetLength(1); y++) {
+            if (automata.IsEmpty(x,y)) SpawnFlower(x,y,9);
+        }
     }
 
     void SpawnFlowerRandomly() {
@@ -70,7 +78,7 @@ public class FlowerAutomataController : MonoBehaviour
         // TODO random spawn offsets
         Vector3 pos = new Vector3(x, 0, y) * flowerCellScale;
 
-        GameObject newFlower = Instantiate(flowerPrefab, pos, Quaternion.identity);
+        GameObject newFlower = Instantiate(flowerPrefab, pos, Quaternion.identity, transform);
         Color randomColor = NewFlowerColor();
         Renderer flowerRenderer = newFlower.GetComponent<Renderer>();
         if (flowerRenderer != null)
