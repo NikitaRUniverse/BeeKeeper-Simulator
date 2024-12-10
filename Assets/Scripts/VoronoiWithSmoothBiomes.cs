@@ -5,6 +5,7 @@ using System.IO;
 
 public class VoronoiWithSmoothBiomes : MonoBehaviour
 {
+    public int randomSeed = 0;
     public int textureWidth = 1920; 
     public int textureHeight = 1080; 
     public int numPoints = 50; // Number of random points
@@ -13,6 +14,7 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
     public Color biomeColor2 = Color.yellow; 
     public float transitionSharpness = 10.0f; // Controls the sharpness of the transition
 
+    System.Random random;
     private Texture2D texture;
     private Vector2[] points; // Random points
     private Color[] regionColors; // Colors of Voronoi segments
@@ -20,6 +22,8 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
 
     void Start()
     {
+        UnityEngine.Random.InitState(randomSeed);
+        random = new System.Random(randomSeed);
         GenerateNoiseMap();
         GenerateRandomPoints();
         AssignBiomesToRegions();
@@ -55,8 +59,6 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
     void GenerateRandomPoints()
     {
         points = new Vector2[numPoints];
-        System.Random random = new System.Random();
-
         for (int i = 0; i < numPoints; i++)
         {
             float x = random.Next(0, textureWidth);
@@ -173,10 +175,8 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
     {
         for (int col = 0; col < cols; col++)
         {
-            // Проверяем текущую ячейку
             bool hasBiome2 = false;
 
-            // Инвертируем row для корректного направления
             int invertedRow = rows - 1 - row;
 
             for (int y = invertedRow * cellHeight; y < (invertedRow + 1) * cellHeight; y++)
