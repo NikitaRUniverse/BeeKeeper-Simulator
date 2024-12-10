@@ -191,8 +191,8 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
 
     int[,] get_map()
 {
-    int cellWidth = 120;
-    int cellHeight = 120;
+    int cellWidth = 60;
+    int cellHeight = 60;
 
     int cols = textureWidth / cellWidth;
     int rows = textureHeight / cellHeight;
