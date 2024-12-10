@@ -135,7 +135,8 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
         {
             GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
             plane.transform.position = Vector3.zero;
-            plane.transform.localScale = new Vector3(16, 1, 9);;
+            plane.transform.localScale = new Vector3(16, 1, 9);
+            plane.transform.Rotate(0.0f, 180.0f, 0.0f);
             plane.name = "VoronoiWithSmoothBiomesPlane";
 
             renderer = plane.GetComponent<Renderer>();
@@ -159,43 +160,47 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
     }
 
     int[,] get_map()
+{
+    int cellWidth = 120;
+    int cellHeight = 120;
+
+    int cols = textureWidth / cellWidth;
+    int rows = textureHeight / cellHeight;
+
+    int[,] mapMatrix = new int[rows, cols];
+
+    for (int row = 0; row < rows; row++)
     {
-        int cellWidth = 120;
-        int cellHeight = 120;
-
-        int cols = textureWidth / cellWidth;
-        int rows = textureHeight / cellHeight;
-
-        int[,] mapMatrix = new int[rows, cols];
-
-        for (int row = 0; row < rows; row++)
+        for (int col = 0; col < cols; col++)
         {
-            for (int col = 0; col < cols; col++)
+            // Проверяем текущую ячейку
+            bool hasBiome2 = false;
+
+            // Инвертируем row для корректного направления
+            int invertedRow = rows - 1 - row;
+
+            for (int y = invertedRow * cellHeight; y < (invertedRow + 1) * cellHeight; y++)
             {
-                bool hasBiome2 = false;
-
-                for (int y = row * cellHeight; y < (row + 1) * cellHeight; y++)
+                for (int x = col * cellWidth; x < (col + 1) * cellWidth; x++)
                 {
-                    for (int x = col * cellWidth; x < (col + 1) * cellWidth; x++)
+                    Color pixelColor = texture.GetPixel(x, y);
+
+                    // Если цвет близок к цвету второго биома, отмечаем наличие
+                    if (IsColorSimilar(pixelColor, biomeColor2))
                     {
-                        Color pixelColor = texture.GetPixel(x, y);
-
-                        // If the color is close to the color of the second biome, we note the presence
-                        if (IsColorSimilar(pixelColor, biomeColor2))
-                        {
-                            hasBiome2 = true;
-                            break;
-                        }
+                        hasBiome2 = true;
+                        break;
                     }
-                    if (hasBiome2) break; // Stop checking if biome is found
                 }
-
-                mapMatrix[row, col] = hasBiome2 ? 0 : 1;
+                if (hasBiome2) break; // Прекращаем проверку, если биом найден
             }
-        }
 
-        return mapMatrix;
+            mapMatrix[row, col] = hasBiome2 ? 0 : 1;
+        }
     }
+
+    return mapMatrix;
+}
 
     void SaveMapToFile(int[,] mapMatrix)
     {
