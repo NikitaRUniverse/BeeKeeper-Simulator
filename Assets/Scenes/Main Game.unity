@@ -1000,7 +1000,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1420581955}
   - component: {fileID: 1420581954}
-  - component: {fileID: 1420581956}
   - component: {fileID: 1420581957}
   m_Layer: 0
   m_Name: Game Manager
@@ -1037,25 +1036,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1420581956
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1420581953}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec74fbbc9a6968c42a3d41be682b9902, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  flowerPrefab: {fileID: 7210033087037091213, guid: 9356c802e4152c24c864d034bb719bbf, type: 3}
-  numberOfFlowers: 150
-  spawnAreaSize: {x: 18, y: 18}
-  centralExclusionRadius: 1
-  constantY: -0.2
-  flowerCounterUI: {fileID: 1982079994}
-  newFlowers: 20
 --- !u!114 &1420581957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1145,7 +1125,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Total: 150/150'
+  m_text: TEXT
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
