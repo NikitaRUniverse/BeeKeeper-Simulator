@@ -34,13 +34,15 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
 
     void GenerateNoiseMap()
 {
-    int gridSize = 16; 
+    int gridSize = 16; // Grid size for Value Noise
     int gridX = Mathf.CeilToInt(textureWidth / (float)gridSize);
     int gridY = Mathf.CeilToInt(textureHeight / (float)gridSize);
 
+    // Grid of random values
     float[,] gridValues = new float[gridX + 1, gridY + 1];
     noiseMap = new float[textureWidth, textureHeight];
 
+    // Generate random values for grid nodes
     for (int x = 0; x <= gridX; x++)
     {
         for (int y = 0; y <= gridY; y++)
@@ -49,6 +51,7 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
         }
     }
 
+    // Interpolate values for each pixel
     for (int y = 0; y < textureHeight; y++)
     {
         for (int x = 0; x < textureWidth; x++)
@@ -73,6 +76,7 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
             float v1 = Mathf.Lerp(v01, v11, dx);
             float noiseValue = Mathf.Lerp(v0, v1, dy);
 
+            // Brightening the center of the map to create a flield
             Vector2 center = new Vector2(textureWidth / 2f, textureHeight / 2f);
             float distanceToCenter = Vector2.Distance(new Vector2(x, y), center) / (textureWidth / 2f);
             distanceToCenter = Mathf.Clamp01(distanceToCenter);
@@ -180,6 +184,7 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
         renderer.material.mainTexture = texture;
     }
 
+    //Save texture to file
     void SaveTextureToFile()
     {
         byte[] bytes = texture.EncodeToPNG();
@@ -198,7 +203,8 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
     int rows = textureHeight / cellHeight;
 
     int[,] mapMatrix = new int[rows, cols];
-
+    // Here I create a matrix with chanks for future work of my groupmates. 
+    // 0 - chank is free and you can place here what you need(hive, flower)
     for (int row = 0; row < rows; row++)
     {
         for (int col = 0; col < cols; col++)
@@ -213,13 +219,14 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
                 {
                     Color pixelColor = texture.GetPixel(x, y);
 
+                    // If the color is close to the color of the second biome, we mark the presence
                     if (IsColorSimilar(pixelColor, biomeColor2))
                     {
                         hasBiome2 = true;
                         break;
                     }
                 }
-                if (hasBiome2) break; 
+                if (hasBiome2) break; // Stop checking if biome is found
             }
 
             mapMatrix[row, col] = hasBiome2 ? 0 : 1;
@@ -228,7 +235,7 @@ public class VoronoiWithSmoothBiomes : MonoBehaviour
 
     return mapMatrix;
 }
-
+    //Save matrix to file 
     void SaveMapToFile(int[,] mapMatrix)
     {
         StringBuilder sb = new StringBuilder();
