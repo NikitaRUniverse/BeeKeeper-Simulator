@@ -4,24 +4,24 @@ using UnityEngine;
 public class FlowerAutomata
 {
     /*
-    Cellular automata in Moore's neighborhood
+    Probabilistic cellular automata in Moore's neighborhood
 
     -5 to -1 -- Dead flower
     0 -- Empty space
-    1 to 5 -- Non-pollinating (alive) flower
-    6 to 9 -- Pollinating (alive) flower
+    1 to 7 -- Non-pollinating (alive) flower
+    8 to 9 -- Pollinating (alive) flower
 
-    6 to 9
+    8 to 9
     Reduces by 1 with "alive reduction chance"
 
-    1 to 5:
-    If at least two neighbors are 6-9 and it's raining, foreach 6-9 neighbor becomes 9 with "pollination chance"
+    1 to 7:
+    If at least two neighbors are 6-9, foreach 8-9 neighbor becomes 9 with "pollination chance"
     Else, reduces by 1 with "alive reduction chance" (if is 1, becomes -1)
 
     0:
-    If at least two neighbors are 6-9 and it's raining, foreach 6-9 neighbor becomes 5 with "seeding chance"
+    If at least two neighbors are 8-9 and it's raining, foreach 8-9 neighbor becomes 5 with "seeding chance"
 
-    -4 до -1:
+    -4 to -1:
     Reduces by 1 with "dead reduction chance"
 
     -5:
@@ -35,7 +35,7 @@ public class FlowerAutomata
     private WeatherSystem weather;
     private Vector2Int chunksSize;
     private int chunkToAutomataLength;
-    private int deadSteps;
+
     private int autPollenStart;
     private int autNonPollenStart;
     private float aliveReductionChance;
@@ -55,42 +55,12 @@ public class FlowerAutomata
 
     public int[,] automata;
 
-    
-    public FlowerAutomata(WeatherSystem weather, Vector2Int chunksSize, int chunkToAutomataLength, int deadSteps, int autPollenStart, int autNonPollenStart, float aliveReductionChance, float deadReductionChance, float pollinationChance, float seedingChance)
-    {
-        this.weather = weather;
-        this.chunksSize = chunksSize;
-        this.chunkToAutomataLength = chunkToAutomataLength;
-        this.deadSteps = deadSteps;
-        this.autPollenStart = autPollenStart;
-        this.autNonPollenStart = autNonPollenStart;
-        this.aliveReductionChance = aliveReductionChance;
-        this.deadReductionChance = deadReductionChance;
-        this.pollinationChance = pollinationChance;
-        this.seedingChance = seedingChance;
-
-        autDeadStart = -1;
-        autDeadLimit = -deadSteps;
-        autEmpty = 0;
-        autBlocked = -8;
-
-        if (autPollenStart <= autNonPollenStart) {
-            Debug.LogError("");
-            return;
-        }
-
-        automataSize = chunksSize * chunkToAutomataLength;
-        ReadChunks("Assets/output.txt");
-        InitializeAutomata();
-    }
-
     public FlowerAutomata(WeatherSystem weather, int[,] chunks, Vector2Int chunksSize, int chunkToAutomataLength, int deadSteps, int autPollenStart, int autNonPollenStart, float aliveReductionChance, float deadReductionChance, float pollinationChance, float seedingChance)
     {
         this.weather = weather;
         this.chunks = chunks;
         this.chunksSize = chunksSize;
         this.chunkToAutomataLength = chunkToAutomataLength;
-        this.deadSteps = deadSteps;
         this.autPollenStart = autPollenStart;
         this.autNonPollenStart = autNonPollenStart;
         this.aliveReductionChance = aliveReductionChance;
@@ -115,26 +85,13 @@ public class FlowerAutomata
         InitializeAutomata();
     }
 
-    private void ReadChunks(string filePath)
-    {
-        chunks = new int[chunksSize.x, chunksSize.y];
-        // Read the grid from the file
-        string[] lines = File.ReadAllLines(filePath);
-
-        for (int i = 0; i < lines.Length; i++) {
-            string[] values = lines[i].Split(' ');
-            for (int j = 0; j < values.Length; j++) {
-                chunks[j, i] = int.Parse(values[j]);
-            }
-        }
-    }
-
     private void InitializeAutomata() {
         automata = new int[automataSize.x, automataSize.y];
         
         for (int chx = 0; chx < chunksSize.x; chx++) for (int chy = 0; chy < chunksSize.y; chy++) {
             bool blocked = chunks[chx, chy] == 1;
             for (int dx = 0; dx < chunkToAutomataLength; dx++) for (int dy = 0; dy < chunkToAutomataLength; dy++) {
+                // Wonky transformation from chunk to automata coordinates
                 int y = chx*chunkToAutomataLength + dx, x = chy*chunkToAutomataLength + dy;
                 if (blocked) {
                     automata[x,automataSize.y-1-y] = autBlocked;
@@ -144,9 +101,11 @@ public class FlowerAutomata
         }
     }
 
+    // Updates automata grid with rules described at the beginning
     public void Step() {
         automataBuffer = new int[automataSize.x, automataSize.y];
         
+        // TODO parameterize weather coefs
         switch (weather.currentWeather) {
             case WeatherSystem.WeatherType.Sunny:
                 pollinationChance = 0.01f;

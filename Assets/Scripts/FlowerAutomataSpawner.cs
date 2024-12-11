@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class FlowerAutomataController : MonoBehaviour
 {
+    /*
+    Spawns and updates flowers based on FlowerAutomata rules
+    */
+
     public GameObject flowerPrefab;
     public UIFlowerCounter counter;
     public WeatherSystem weather;
@@ -29,11 +33,9 @@ public class FlowerAutomataController : MonoBehaviour
     private FlowerCell[,] flowers;
 
     
-    private Color color1 = new Color(1f, 0.95f, 0.2f);
-    private Color color2 = new Color(1f, 0.4f, 0.2f);
-    private Color color3 = new Color(0.5f, 0.5f, 0.55f);
-    private Color color4 = new Color(0.7f, 0.3f, 0.3f);
-    private Color color5 = new Color(0.2f, 0.6f, 0.4f);
+    private Color color1 = new Color(1f, 0.95f, 0.2f); // Yellow-ish
+    private Color color2 = new Color(1f, 0.4f, 0.2f); // Red
+    private Color color3 = new Color(1f, 0.75f, 0.1f); // Orange-ish
 
 
     public void Init(int[,] chunks)
@@ -62,6 +64,7 @@ public class FlowerAutomataController : MonoBehaviour
         for (int i = 0; i < flowerStartLoopIters; i++) {
             AutomataStep();
         }
+        ClearDeadFlowers();
         StartCoroutine(StartAutomataLoop());
     }
 
@@ -72,6 +75,7 @@ public class FlowerAutomataController : MonoBehaviour
         }
     }
 
+    // Unused: Tries to pick a random location for a new flower, then spawns
     void SpawnFlowerRandomly()
     {
         int x,y;
@@ -84,6 +88,7 @@ public class FlowerAutomataController : MonoBehaviour
         SpawnFlower(x,y,9);
     }
 
+    // Initializes a living flower in the automata and the scene
     void SpawnFlower(int x, int y, int automatonValue)
     {
         automata.automata[x,y] = automatonValue;
@@ -97,6 +102,7 @@ public class FlowerAutomataController : MonoBehaviour
         flowers[x,y] = flower;
     }
 
+    // Unused: Makes a flowerbed in Moore's neighborhood around all alive flowers
     void SpreadFlowersRandomly() {
         for (int x = 1; x < automata.automata.GetLength(0)-1; x++) for (int y = 1; y < automata.automata.GetLength(1)-1; y++) {
             if (!automata.IsEmpty(x,y)) continue;
@@ -109,13 +115,24 @@ public class FlowerAutomataController : MonoBehaviour
         }
     }
 
+    void ClearDeadFlowers() {
+        for (int x = 1; x < automata.automata.GetLength(0)-1; x++) for (int y = 1; y < automata.automata.GetLength(1)-1; y++) {
+            if (automata.IsDead(x,y)) {
+                automata.automata[x,y] = 0;
+            }
+        }
+        UpdateFlowers();
+    }
+
     Color NewFlowerColor() {
-        int randomIndex = Random.Range(0, 2); 
+        int randomIndex = Random.Range(0, 3); 
         switch (randomIndex) {
             case 0:
                 return color1;
             case 1:
                 return color2;
+            case 2:
+                return color3;
             default:
                 return color1;
         }
@@ -123,7 +140,6 @@ public class FlowerAutomataController : MonoBehaviour
 
     private IEnumerator StartAutomataLoop() {
         while (active) {
-            Debug.Log("Step!");
             AutomataStep();
             yield return new WaitForSeconds(stepPeriodSeconds);
         }
@@ -134,6 +150,7 @@ public class FlowerAutomataController : MonoBehaviour
         UpdateFlowers();
     }
 
+    // Updates flower objects based on automata
     private void UpdateFlowers() {
         int alive = 0;
 
@@ -154,6 +171,7 @@ public class FlowerAutomataController : MonoBehaviour
         counter.UpdateFlowerCount(alive);
     }
 
+    // Updates a flower that was just visited by bees
     public void PollinateFlower(int x, int y) {
         if (!automata.IsAlive(x,y)) return;
         automata.automata[x,y] = 9;
