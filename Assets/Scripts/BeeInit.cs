@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Creating bees and setting their hive point
+
 public class BeeInit : MonoBehaviour
 {
     public int bees;

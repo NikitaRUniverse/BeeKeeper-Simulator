@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WeatherMusic : MonoBehaviour
 {
+    // Smooth changing volumes of every version of the music
+
     public AudioSource sunny;
     public AudioSource cloudy;
     public AudioSource rainy;

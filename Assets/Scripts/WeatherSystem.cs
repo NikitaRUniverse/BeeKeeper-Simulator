@@ -33,6 +33,8 @@ public class WeatherSystem : MonoBehaviour
 
     void Update()
     {
+        // Ranging value using Lerp + Formal
+
         timer += Time.deltaTime;
 
         if (timer >= changeInterval)
@@ -52,8 +54,6 @@ public class WeatherSystem : MonoBehaviour
             timer = 0f;
             changeInterval = Random.Range(0.5f, 3f);
         }
-
-        currentValue = Mathf.Lerp(currentValue, targetValue, Time.deltaTime * lerpSpeed);
 
         // Smoothly interpolate current value
         currentValue = Mathf.Lerp(currentValue, targetValue, Time.deltaTime * lerpSpeed);
