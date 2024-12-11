@@ -19,7 +19,7 @@ public class FlowerCell : MonoBehaviour
     }
 
     public void UpdateAlive(int strength) {
-        float t = strength / 12;
+        float t = 0.75f - strength/12f;
         flowerRenderer.material.color = Color.Lerp(innateColor, deadColor, t);
     }
 

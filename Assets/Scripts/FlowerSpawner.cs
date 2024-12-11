@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class FlowerSpawner : MonoBehaviour
@@ -20,7 +18,7 @@ public class FlowerSpawner : MonoBehaviour
     {
         initialFlowers = numberOfFlowers;
         GenerateFlowers();
-        flowerCounterUI.UpdateFlowerCount(numberOfFlowers, initialFlowers);
+        flowerCounterUI.UpdateFlowerCount(numberOfFlowers);
         weatherSystem = GameObject.FindGameObjectWithTag("Weather").GetComponent<WeatherSystem>();
     }
 
@@ -81,7 +79,7 @@ public class FlowerSpawner : MonoBehaviour
     private void OnFlowerDestroyed()
     {
         numberOfFlowers--;
-        flowerCounterUI.UpdateFlowerCount(numberOfFlowers, initialFlowers);
+        flowerCounterUI.UpdateFlowerCount(numberOfFlowers);
     }
 
     // Spawning the flowers during the rain
@@ -100,6 +98,6 @@ public class FlowerSpawner : MonoBehaviour
                 newFlower.GetComponent<Flower>().OnFlowerDestroyed += OnFlowerDestroyed;
             }
         }
-        flowerCounterUI.UpdateFlowerCount(numberOfFlowers, initialFlowers);
+        flowerCounterUI.UpdateFlowerCount(numberOfFlowers);
     }
 }

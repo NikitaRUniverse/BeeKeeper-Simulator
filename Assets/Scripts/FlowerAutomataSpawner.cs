@@ -4,6 +4,8 @@ using UnityEngine;
 public class FlowerAutomataController : MonoBehaviour
 {
     public GameObject flowerPrefab;
+    public UIFlowerCounter counter;
+    public WeatherSystem weather;
     public int flowerStartSeeds;
     public int flowerStartSpreadIters;
     public float flowerStartSpreadChance;
@@ -37,6 +39,7 @@ public class FlowerAutomataController : MonoBehaviour
     public void Init(int[,] chunks)
     {
         automata = new FlowerAutomata(
+            weather,
             chunks,
             chunksSize,
             chunkToAutomataLength,
@@ -56,9 +59,9 @@ public class FlowerAutomataController : MonoBehaviour
         // for (int i = 0; i < flowerStartSpreadIters; i++) {
         //     SpreadFlowersRandomly();
         // }
-        // for (int i = 0; i < flowerStartLoopIters; i++) {
-        //     AutomataStep();
-        // }
+        for (int i = 0; i < flowerStartLoopIters; i++) {
+            AutomataStep();
+        }
         StartCoroutine(StartAutomataLoop());
     }
 
@@ -132,11 +135,14 @@ public class FlowerAutomataController : MonoBehaviour
     }
 
     private void UpdateFlowers() {
+        int alive = 0;
+
         for (int x = 0; x < automata.automata.GetLength(0); x++) for (int y = 0; y < automata.automata.GetLength(1); y++) {
             if (automata.IsAlive(x, y)) {
                 if (flowers[x,y] == null) {
                     SpawnFlower(x, y, automata.automata[x,y]);
                 }
+                alive++;
                 flowers[x,y].UpdateAlive(automata.automata[x,y]);
             } else if (automata.IsDead(x,y)) {
                 flowers[x,y].UpdateDead();
@@ -145,6 +151,7 @@ public class FlowerAutomataController : MonoBehaviour
                 flowers[x,y] = null;
             }
         }
+        counter.UpdateFlowerCount(alive);
     }
 
     public void PollinateFlower(int x, int y) {

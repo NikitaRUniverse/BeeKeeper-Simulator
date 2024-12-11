@@ -6,8 +6,8 @@ public class UIFlowerCounter : MonoBehaviour
 {
     // Displaying the amount of flowers
 
-    public void UpdateFlowerCount(int flowerCount, int initialFlowers)
+    public void UpdateFlowerCount(int flowerCount)
     {
-        GetComponent<TextMeshProUGUI>().text = "Total: " + flowerCount + "/" + initialFlowers;
+        GetComponent<TextMeshProUGUI>().text = "Flowers: " + flowerCount;
     }
 }

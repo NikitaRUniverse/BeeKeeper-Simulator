@@ -96,5 +96,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65e2f3078ae26f3458964a7b85292877, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bees: 10
+  bees: 6
   beePrefab: {fileID: 297320978708403445, guid: ee471f0b736c56c46b99f720c4dd3391, type: 3}

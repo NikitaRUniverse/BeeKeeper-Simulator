@@ -283,8 +283,8 @@ MonoBehaviour:
   az: -2.5
   wx: 1.25
   hz: -1.25
-  bx: 0.625
-  bz: -1.85
+  bx: 1.25
+  bz: -1.25
   hivePrefab: {fileID: 8366170884155809065, guid: 6f767238d71c96d4aba103d5e388232f, type: 3}
   randomSeed: 0
   maxHives: 3
@@ -1031,7 +1031,7 @@ Transform:
   m_GameObject: {fileID: 1420581953}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -40, y: 0, z: -22.5}
+  m_LocalPosition: {x: -39.375, y: 0, z: -21.875}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1069,19 +1069,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flowerPrefab: {fileID: 7210033087037091213, guid: 9356c802e4152c24c864d034bb719bbf, type: 3}
-  flowerStartSeeds: 2000
+  counter: {fileID: 1982079994}
+  weather: {fileID: 1310104184}
+  flowerStartSeeds: 40
   flowerStartSpreadIters: 3
   flowerStartSpreadChance: 0.7
+  flowerStartLoopIters: 35
   flowerCellScale: 1.25
   chunksSize: {x: 18, y: 32}
   chunkToAutomataLength: 2
   deadSteps: 5
   autPollenStart: 9
-  autNonPollenStart: 5
-  aliveReductionChance: 0.8
-  deadReductionChance: 0.8
-  pollinationChance: 0.1
-  seedingChance: 0.15
+  autNonPollenStart: 7
+  aliveReductionChance: 0.3
+  deadReductionChance: 0.3
+  pollinationChance: 0.05
+  seedingChance: 0.09
   active: 1
   stepPeriodSeconds: 0.3
 --- !u!1 &1982079990
